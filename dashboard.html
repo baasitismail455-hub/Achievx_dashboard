@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#1e40af">
+  <title>AchievX Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body class="app-page">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="brand-lockup">
+        <div class="brand-mark">A<span>×</span></div>
+        <div>
+          <div class="brand-name">AchievX</div>
+          <div class="brand-subtitle">ADMIN CENTER</div>
+        </div>
+      </div>
+      <button id="mobileClose" class="mobile-close icon-btn" type="button">×</button>
+    </div>
+
+    <div class="org-mini">
+      <div class="org-avatar" id="orgAvatar">G</div>
+      <div class="org-mini-copy">
+        <strong id="sidebarOrgName">Organization</strong>
+        <span id="sidebarOrgCode">ORG-──────────</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="overview"><span>⌂</span> Overview</button>
+      <button class="nav-item" data-view="workers"><span>♙</span> Workers & Devices</button>
+      <button class="nav-item" data-view="studies"><span>▣</span> Studies</button>
+      <button class="nav-item" data-view="data"><span>◫</span> Cloud Data</button>
+      <button class="nav-item" data-view="invitations"><span>✦</span> Invitations</button>
+      <button class="nav-item" data-view="audit"><span>◷</span> Audit Log</button>
+      <button class="nav-item" data-view="settings"><span>⚙</span> Organization</button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="security-note"><span class="pulse"></span><div><strong>Tenant isolation active</strong><small>Organization data is scoped by RLS.</small></div></div>
+      <button id="logoutBtn" class="nav-item logout"><span>↪</span> Sign out</button>
+    </div>
+  </aside>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <main class="main">
+    <header class="topbar">
+      <button id="mobileMenu" class="icon-btn mobile-menu" type="button">☰</button>
+      <div class="topbar-title">
+        <span id="viewEyebrow" class="eyebrow">ORGANIZATION OVERVIEW</span>
+        <h1 id="viewTitle">Good afternoon, Admin</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn notification-btn" title="Notifications">♢<span class="notification-dot"></span></button>
+        <div class="user-chip">
+          <div class="user-avatar" id="adminAvatar">A</div>
+          <div><strong id="adminNameLabel">Admin</strong><small>Organization Admin</small></div>
+        </div>
+      </div>
+    </header>
+
+    <div id="globalMessage" class="alert page-alert hidden"></div>
+
+    <section id="view-overview" class="view active-view">
+      <div class="welcome-banner">
+        <div>
+          <span class="eyebrow light">ACHIEVX ORGANIZATION CONTROL CENTER</span>
+          <h2 id="welcomeOrg">Your organization at a glance.</h2>
+          <p>Monitor field operations, synchronized records and authorized devices from one place.</p>
+        </div>
+        <div class="welcome-id">
+          <span>ORGANIZATION ID</span>
+          <strong id="welcomeCode">ORG-──────────</strong>
+          <button id="copyOrgCode" class="copy-btn" type="button">Copy</button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <article class="stat-card"><div class="stat-icon blue">♙</div><div><span>Active workers</span><strong id="statWorkers">0</strong><small id="statWorkerSub">0 authorized devices</small></div></article>
+        <article class="stat-card"><div class="stat-icon green">◫</div><div><span>Cloud records</span><strong id="statRecords">0</strong><small id="statRecordSub">Waiting for synchronization</small></div></article>
+        <article class="stat-card"><div class="stat-icon purple">▣</div><div><span>Active studies</span><strong id="statStudies">0</strong><small>Organization projects</small></div></article>
+        <article class="stat-card"><div class="stat-icon orange">↯</div><div><span>Pending invites</span><strong id="statInvites">0</strong><small>Enrollment codes</small></div></article>
+      </div>
+
+      <div class="dashboard-grid">
+        <article class="card large-card">
+          <div class="card-head"><div><span class="eyebrow">FIELD NETWORK</span><h3>Worker activity</h3></div><button class="text-btn" data-go="workers">Manage workers →</button></div>
+          <div id="workerActivity" class="activity-list empty-state">No workers have been enrolled yet.</div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div><span class="eyebrow">SYNCHRONIZATION</span><h3>Cloud health</h3></div></div>
+          <div class="sync-ring"><div><strong id="syncPercent">—</strong><span>ready</span></div></div>
+          <div class="sync-legend"><div><span class="dot green-dot"></span><span>Connected devices</span><strong id="connectedCount">0</strong></div><div><span class="dot gray-dot"></span><span>Offline / revoked</span><strong id="offlineCount">0</strong></div></div>
+        </article>
+      </div>
+
+      <div class="dashboard-grid">
+        <article class="card">
+          <div class="card-head"><div><span class="eyebrow">RECENT STUDIES</span><h3>Study portfolio</h3></div><button class="text-btn" data-go="studies">View all →</button></div>
+          <div id="recentStudies" class="compact-list empty-state">No studies created yet.</div>
+        </article>
+
+        <article class="card">
+          <div class="card-head"><div><span class="eyebrow">RECENT EVENTS</span><h3>Audit trail</h3></div><button class="text-btn" data-go="audit">Full log →</button></div>
+          <div id="recentAudit" class="compact-list empty-state">No events yet.</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="view-workers" class="view">
+      <div class="section-toolbar">
+        <div><span class="eyebrow">FIELD NETWORK</span><h2>Workers & devices</h2><p>Each worker/device receives its own identity inside your organization.</p></div>
+        <button class="btn btn-primary" id="newInviteBtn">＋ Add worker</button>
+      </div>
+      <div class="card table-card">
+        <div class="table-toolbar"><input id="workerSearch" class="search-input" placeholder="Search worker or device…"><select id="workerStatusFilter"><option value="all">All statuses</option><option value="active">Active</option><option value="offline">Offline</option><option value="revoked">Revoked</option></select></div>
+        <div class="table-wrap"><table><thead><tr><th>Worker</th><th>Device</th><th>Status</th><th>Last sync</th><th>Registered</th><th>Actions</th></tr></thead><tbody id="workersTable"></tbody></table></div>
+        <div id="workersEmpty" class="empty-state hidden">No workers match your filters.</div>
+      </div>
+    </section>
+
+    <section id="view-studies" class="view">
+      <div class="section-toolbar">
+        <div><span class="eyebrow">PROJECT MANAGEMENT</span><h2>Studies</h2><p>Keep different research projects separate while they remain under one organization.</p></div>
+        <button class="btn btn-primary" id="newStudyBtn">＋ Create study</button>
+      </div>
+      <div id="studiesGrid" class="study-grid"></div>
+      <div id="studiesEmpty" class="card empty-state">No studies yet. Create the first project for this organization.</div>
+    </section>
+
+    <section id="view-data" class="view">
+      <div class="section-toolbar">
+        <div><span class="eyebrow">CENTRAL DATASET</span><h2>Cloud data</h2><p>All synchronized records for this organization, filterable by worker, study and location.</p></div>
+        <button class="btn btn-secondary" id="refreshDataBtn">↻ Refresh</button>
+      </div>
+      <div class="filter-card card">
+        <div><label>Worker<select id="dataWorkerFilter"><option value="">All workers</option></select></label>
+        <label>Study<select id="dataStudyFilter"><option value="">All studies</option></select></label>
+        <label>Location<input id="dataLocationFilter" placeholder="e.g. Maiduguri"></label>
+        <label>From<input id="dataFrom" type="date"></label>
+        <label>To<input id="dataTo" type="date"></label>
+        <button class="btn btn-primary" id="applyDataFilter">Filter</button></div>
+      </div>
+      <div class="card table-card">
+        <div class="data-summary"><strong id="dataCount">0 records</strong><span>Organization dataset</span></div>
+        <div class="table-wrap"><table><thead><tr><th>Record ID</th><th>Worker</th><th>Study</th><th>Collected</th><th>Location</th><th>Device</th><th>Payload</th></tr></thead><tbody id="dataTable"></tbody></table></div>
+        <div id="dataEmpty" class="empty-state">No synchronized records found.</div>
+      </div>
+    </section>
+
+    <section id="view-invitations" class="view">
+      <div class="section-toolbar">
+        <div><span class="eyebrow">DEVICE ENROLLMENT</span><h2>Invitation codes</h2><p>Create short-lived codes that workers enter inside AchievX to join your organization.</p></div>
+        <button class="btn btn-primary" id="newInviteBtn2">＋ Create invitation</button>
+      </div>
+      <div class="card invitation-hero">
+        <div class="invite-symbol">✦</div>
+        <div><h3>Secure device enrollment</h3><p>Workers should never need your organization password. Create an invitation for each device, set its worker label, then send the code to that worker.</p></div>
+      </div>
+      <div id="invitesGrid" class="invite-grid"></div>
+      <div id="invitesEmpty" class="card empty-state">No invitations yet.</div>
+    </section>
+
+    <section id="view-audit" class="view">
+      <div class="section-toolbar"><div><span class="eyebrow">COMPLIANCE</span><h2>Audit log</h2><p>Track organization administration and device-management events.</p></div></div>
+      <div class="card table-card"><div class="table-wrap"><table><thead><tr><th>Time</th><th>Action</th><th>Actor</th><th>Details</th></tr></thead><tbody id="auditTable"></tbody></table></div></div>
+    </section>
+
+    <section id="view-settings" class="view">
+      <div class="section-toolbar"><div><span class="eyebrow">ORGANIZATION</span><h2>Organization settings</h2><p>Manage identity and future AchievX integration controls.</p></div></div>
+      <div class="settings-grid">
+        <article class="card">
+          <div class="card-head"><div><span class="eyebrow">IDENTITY</span><h3>Organization profile</h3></div></div>
+          <div class="profile-code"><span>Organization ID</span><strong id="settingsOrgCode">—</strong><button id="copySettingsCode" class="copy-btn">Copy</button></div>
+          <label>Organization name<input id="settingsOrgName" maxlength="120"></label>
+          <label>Admin name<input id="settingsAdminName" maxlength="120"></label>
+          <button class="btn btn-primary" id="saveSettings">Save changes</button>
+        </article>
+        <article class="card integration-card">
+          <div class="card-head"><div><span class="eyebrow">ACHIEVX CONNECTION</span><h3>Integration readiness</h3></div><span class="status-pill pending">READY TO CONNECT</span></div>
+          <div class="architecture">
+            <div><strong>AchievX device</strong><small>Local IndexedDB</small></div><span>→</span><div><strong>Sync layer</strong><small>Authenticated API</small></div><span>→</span><div><strong>Organization cloud</strong><small>PostgreSQL + Authenticated API</small></div>
+          </div>
+          <p class="helper">This project does not modify the current AchievX application. The connection will be added later through a dedicated synchronization API.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <button id="modalClose" class="modal-close">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="./assets/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      window.AchievXAdmin.initDashboard();
+    });
+  </script>
+</body>
+</html>

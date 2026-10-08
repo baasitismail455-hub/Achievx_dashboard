@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#1e40af">
+  <title>AchievX Admin — Sign in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-brand-panel">
+      <div class="brand-lockup">
+        <div class="brand-mark">A<span>×</span></div>
+        <div>
+          <div class="brand-name">AchievX</div>
+          <div class="brand-subtitle">ADMIN CONTROL CENTER</div>
+        </div>
+      </div>
+
+      <div class="auth-hero">
+        <span class="eyebrow">ORGANIZATION DATA INFRASTRUCTURE</span>
+        <h1>One control center for every field team.</h1>
+        <p>Manage workers, devices, studies, invitations and synchronized research records from one secure organizational workspace.</p>
+      </div>
+
+      <div class="trust-row">
+        <span>✓ Multi-tenant</span>
+        <span>✓ Device-aware</span>
+        <span>✓ Offline-ready</span>
+      </div>
+    </section>
+
+    <section class="auth-card-wrap">
+      <div class="auth-card">
+        <div class="mobile-brand brand-lockup">
+          <div class="brand-mark">A<span>×</span></div>
+          <div>
+            <div class="brand-name">AchievX</div>
+            <div class="brand-subtitle">ADMIN</div>
+          </div>
+        </div>
+
+        <div class="auth-heading">
+          <span class="eyebrow">WELCOME BACK</span>
+          <h2>Organization admin</h2>
+          <p>Sign in to manage your organization.</p>
+        </div>
+
+        <div id="authMessage" class="alert hidden"></div>
+
+        <form id="loginForm">
+          <label>Email
+            <input id="loginEmail" type="email" autocomplete="email" placeholder="admin@genelab.org" required>
+          </label>
+          <label>Password
+            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••" required>
+          </label>
+          <button class="btn btn-primary btn-block" type="submit">Sign in <span>→</span></button>
+        </form>
+
+        <div class="auth-divider"><span>NEW ORGANIZATION?</span></div>
+        <button id="showRegister" class="btn btn-secondary btn-block" type="button">Create organization</button>
+
+        <div id="registerPanel" class="register-panel hidden">
+          <div class="panel-title">
+            <strong>Create your organization</strong>
+            <button id="closeRegister" class="icon-btn" type="button">×</button>
+          </div>
+          <p class="helper">Your organization ID is generated automatically by the database.</p>
+          <form id="registerForm">
+            <label>Organization name
+              <input id="orgName" type="text" placeholder="GeneLab Bioscience" required maxlength="120">
+            </label>
+            <label>Admin full name
+              <input id="adminName" type="text" placeholder="Dr. Ola" required maxlength="120">
+            </label>
+            <label>Admin email
+              <input id="adminEmail" type="email" placeholder="admin@genelab.org" required>
+            </label>
+            <label>Password
+              <input id="adminPassword" type="password" minlength="8" placeholder="Minimum 8 characters" required>
+            </label>
+            <button class="btn btn-primary btn-block" type="submit">Create organization</button>
+          </form>
+        </div>
+
+        <p class="auth-footnote">AchievX Admin is separate from the AchievX offline workspace. It is the organization control plane.</p>
+      </div>
+    </section>
+  </main>
+  
+  <script src="./assets/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      window.AchievXAdmin.initAuthPage();
+    });
+  </script>
+</body>
+</html>
