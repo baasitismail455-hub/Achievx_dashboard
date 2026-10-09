@@ -13,14 +13,12 @@ app = Flask(__name__)
 
 CORS(
     app,
+    supports_credentials=True,
     resources={
         r"/api/*": {
             "origins": [
-                "https://achievx.pythonanywhere.com",
                 "https://achievxdashboard.pythonanywhere.com",
-                "http://127.0.0.1:5000",
-                "http://localhost:5000",
-                "http://10.112.25.60:5000"
+                "https://achievx.pythonanywhere.com"
             ]
         }
     }
