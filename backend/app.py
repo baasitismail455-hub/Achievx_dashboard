@@ -190,7 +190,7 @@ def register():
             "error": "password_too_short"
         }), 400
 
-    from auth import hash_password, login_user
+    from backend.auth import hash_password, login_user
 
     password_hash = hash_password(password)
 
