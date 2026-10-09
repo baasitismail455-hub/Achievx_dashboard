@@ -5,7 +5,7 @@ from functools import wraps
 from flask import session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from database import get_connection
+from backend.database import get_connection
 
 
 def init_session(app):
