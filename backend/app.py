@@ -7,7 +7,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 from backend.database import get_connection
-from auth import init_session, require_auth
+from backend.auth import init_session, require_auth
 
 
 app = Flask(__name__)
