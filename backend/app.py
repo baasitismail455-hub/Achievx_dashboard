@@ -9,7 +9,6 @@ from flask_cors import CORS
 from backend.database import get_connection
 from backend.auth import init_session, require_auth
 
-
 app = Flask(__name__)
 
 CORS(
@@ -17,6 +16,8 @@ CORS(
     resources={
         r"/api/*": {
             "origins": [
+                "https://achievx.pythonanywhere.com",
+                "https://achievxdashboard.pythonanywhere.com",
                 "http://127.0.0.1:5000",
                 "http://localhost:5000",
                 "http://10.112.25.60:5000"
