@@ -104,7 +104,7 @@ def auth_me(user):
 
 @app.post("/api/auth/logout")
 def auth_logout():
-    from auth import logout_user
+    from backend.auth import hash_password, login_user
 
     logout_user()
 
