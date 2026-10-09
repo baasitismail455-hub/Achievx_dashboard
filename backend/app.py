@@ -79,7 +79,7 @@ def auth_login():
     if not password:
         return jsonify({"error": "password_required"}), 400
 
-    from auth import authenticate_user, login_user
+    from backend.auth import authenticate_user, login_user
 
     user = authenticate_user(email, password)
 
