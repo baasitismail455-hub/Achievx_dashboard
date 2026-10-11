@@ -84,6 +84,20 @@ def auth_login():
     if not user:
         return jsonify({"error": "invalid_credentials"}), 401
 
+    with get_connection() as conn:
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT email_verified FROM users WHERE id = %s",
+            (user["id"],)
+        )
+        row = cur.fetchone()
+
+if not row or not row[0]:
+    return jsonify({
+        "error": "email_not_verified",
+        "message": "Please verify your email before signing in."
+    }), 403
+
     login_user(user["id"])
 
     return jsonify({
@@ -217,9 +231,10 @@ def register():
                     INSERT INTO users (
                         email,
                         password_hash,
-                        full_name
+                        full_name, 
+                        email_verified
                     )
-                    VALUES (%s, %s, %s)
+                    VALUES (%s, %s, %s, FALSE)
                     RETURNING id
                     """,
                     (email, password_hash, admin_name)
@@ -303,7 +318,31 @@ def register():
             conn.commit()
 
         # Log the user in immediately
-        login_user(user_id)
+        from backend.auth import create_auth_token
+        from backend.email_service import send_verification_email
+
+        try:
+            token = create_auth_token(
+                user_id,
+                "email_verification",
+                hours=24
+            )
+            send_verification_email(email, token)
+
+            return jsonify({
+                "success": True,
+                "email_verification_required": True,
+                "message": "Account created. Check your email to verify your address before signing in."
+            }), 201
+
+        except Exception:
+            app.logger.exception("Failed to send verification email")
+
+            return jsonify({
+                "success": True,
+                "email_verification_required": True,
+                "message": "Account created, but the verification email could not be sent. Please request another verification email."
+            }), 201
 
         return jsonify({
             "success": True,
@@ -1823,6 +1862,42 @@ def sync_device_records():
         return jsonify({
             "error": "device_sync_failed"
         }), 500
+
+
+@app.post("/api/auth/verify-email")
+def verify_email():
+    data = request.get_json(silent=True) or {}
+    token = (data.get("token") or "").strip()
+
+    if not token:
+        return jsonify({"error": "token_required"}), 400
+
+    from backend.auth import consume_auth_token
+
+    user_id = consume_auth_token(token, "email_verification")
+
+    if not user_id:
+        return jsonify({
+            "error": "invalid_or_expired_token"
+        }), 400
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE users
+                SET email_verified = TRUE
+                WHERE id = %s
+                """,
+                (user_id,)
+            )
+        conn.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Email verified successfully. You can now sign in."
+    }), 200
+
 
 if __name__ == "__main__":
     app.run(
