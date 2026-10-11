@@ -1,5 +1,7 @@
 import os
 import secrets
+import hashlib
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 
 from flask import session, jsonify
@@ -121,3 +123,52 @@ def require_auth(route_function):
         return route_function(user, *args, **kwargs)
 
     return wrapper
+
+
+def create_auth_token(user_id, purpose, hours=24):
+    raw_token = secrets.token_urlsafe(32)
+    token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO auth_tokens (
+                    user_id, token_hash, purpose, expires_at
+                )
+                VALUES (%s, %s, %s, %s)
+                """,
+                (
+                    user_id,
+                    token_hash,
+                    purpose,
+                    datetime.now(timezone.utc) + timedelta(hours=hours),
+                ),
+            )
+        conn.commit()
+
+    return raw_token
+
+
+def consume_auth_token(raw_token, purpose):
+    token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE auth_tokens
+                SET used_at = NOW()
+                WHERE token_hash = %s
+                  AND purpose = %s
+                  AND used_at IS NULL
+                  AND expires_at > NOW()
+                RETURNING user_id
+                """,
+                (token_hash, purpose),
+            )
+            row = cur.fetchone()
+        conn.commit()
+
+    return str(row[0]) if row else None
+
