@@ -64,6 +64,7 @@ def database_test():
             "message": str(e)
         }), 500
 
+
 @app.post("/api/auth/login")
 def auth_login():
     data = request.get_json(silent=True) or {}
@@ -85,18 +86,18 @@ def auth_login():
         return jsonify({"error": "invalid_credentials"}), 401
 
     with get_connection() as conn:
-    with conn.cursor() as cur:
-        cur.execute(
-            "SELECT email_verified FROM users WHERE id = %s",
-            (user["id"],)
-        )
-        row = cur.fetchone()
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT email_verified FROM users WHERE id = %s",
+                (user["id"],)
+            )
+            row = cur.fetchone()
 
-if not row or not row[0]:
-    return jsonify({
-        "error": "email_not_verified",
-        "message": "Please verify your email before signing in."
-    }), 403
+    if not row or not row[0]:
+        return jsonify({
+            "error": "email_not_verified",
+            "message": "Please verify your email before signing in."
+        }), 403
 
     login_user(user["id"])
 
@@ -104,6 +105,7 @@ if not row or not row[0]:
         "success": True,
         "user": user
     })
+
 
 @app.get("/api/auth/me")
 @require_auth
