@@ -61,6 +61,52 @@
           <button class="btn btn-primary btn-block" type="submit">Sign in <span>→</span></button>
         </form>
 
+        
+        <div id="authActions" class="hidden">
+          <form id="resendVerificationForm">
+            <label>Email for verification
+              <input id="resendEmail" type="email" autocomplete="email" required>
+            </label>
+            <button class="btn btn-secondary btn-block" type="submit">
+              Resend verification email
+            </button>
+            </form>
+          </div>
+
+          <div id="passwordResetPanel" class="hidden">
+              <form id="forgotPasswordForm">
+                <label>Email address
+                  <input id="forgotEmail" type="email" autocomplete="email" required>
+                </label>
+                <button class="btn btn-secondary btn-block" type="submit">
+                  Send password-reset link
+                </button>
+              </form>
+
+              <form id="resetPasswordForm" class="hidden">
+                  <label>New password
+                    <input id="newPassword" type="password"
+                      minlength="8" autocomplete="new-password" required>
+                  </label>
+                  <label>Confirm new password
+                    <input id="confirmPassword" type="password"
+                      minlength="8" autocomplete="new-password" required>
+                    </label>
+                <button class="btn btn-primary btn-block" type="submit">
+                    Reset password
+                </button>
+              </form>
+            </div>
+
+            <button id="showForgotPassword" class="btn btn-secondary btn-block"
+              type="button">
+                Forgot password?
+            </button>
+            <button id="backToLogin" class="btn btn-secondary btn-block hidden"
+                  type="button">
+                      Back to sign in
+            </button>
+        
         <div class="auth-divider"><span>NEW ORGANIZATION?</span></div>
         <button id="showRegister" class="btn btn-secondary btn-block" type="button">Create organization</button>
 
