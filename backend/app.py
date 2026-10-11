@@ -1983,6 +1983,68 @@ def forgot_password():
     }), 200
 
 
+@app.post("/api/auth/reset-password")
+def reset_password():
+    data = request.get_json(silent=True) or {}
+
+    token = (data.get("token") or "").strip()
+    password = data.get("password") or ""
+
+    if not token:
+        return jsonify({"error": "token_required"}), 400
+
+    if len(password) < 8:
+        return jsonify({"error": "password_too_short"}), 400
+
+    from backend.auth import consume_auth_token, hash_password
+
+    user_id = consume_auth_token(token, "password_reset")
+
+    if not user_id:
+        return jsonify({
+            "error": "invalid_or_expired_token",
+            "message": "This password-reset link is invalid or has expired. Request a new one."
+        }), 400
+
+    password_hash = hash_password(password)
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE users
+                SET password_hash = %s
+                WHERE id = %s AND is_active = TRUE
+                RETURNING id
+                """,
+                (password_hash, user_id)
+            )
+            updated_user = cur.fetchone()
+
+            if not updated_user:
+                conn.rollback()
+                return jsonify({"error": "account_unavailable"}), 400
+
+            # Invalidate any other outstanding password-reset tokens.
+            cur.execute(
+                """
+                UPDATE auth_tokens
+                SET used_at = NOW()
+                WHERE user_id = %s
+                  AND purpose = 'password_reset'
+                  AND used_at IS NULL
+                """,
+                (user_id,)
+            )
+
+        conn.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Password reset successfully. You can now sign in with your new password."
+    }), 200
+
+
 if __name__ == "__main__":
     app.run(
         host="127.0.0.1",
