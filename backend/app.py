@@ -1901,6 +1901,88 @@ def verify_email():
     }), 200
 
 
+@app.post("/api/auth/resend-verification")
+def resend_verification():
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip().lower()
+
+    if not email:
+        return jsonify({"error": "email_required"}), 400
+
+    from backend.auth import create_auth_token
+    from backend.email_service import send_verification_email
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT id, email_verified
+                FROM users
+                WHERE LOWER(email) = LOWER(%s)
+                """,
+                (email,)
+            )
+            user = cur.fetchone()
+
+    # Use the same response whether or not the address exists.
+    if user and not user[1]:
+        try:
+            token = create_auth_token(
+                user[0],
+                "email_verification",
+                hours=24
+            )
+            send_verification_email(email, token)
+        except Exception:
+            app.logger.exception("Failed to resend verification email")
+
+    return jsonify({
+        "success": True,
+        "message": "If the account exists and needs verification, a verification email will be sent."
+    }), 200
+
+
+@app.post("/api/auth/forgot-password")
+def forgot_password():
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip().lower()
+
+    if not email:
+        return jsonify({"error": "email_required"}), 400
+
+    from backend.auth import create_auth_token
+    from backend.email_service import send_password_reset_email
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT id, is_active
+                FROM users
+                WHERE LOWER(email) = LOWER(%s)
+                """,
+                (email,)
+            )
+            user = cur.fetchone()
+
+    # Avoid revealing whether an email is registered.
+    if user and user[1]:
+        try:
+            token = create_auth_token(
+                user[0],
+                "password_reset",
+                hours=1
+            )
+            send_password_reset_email(email, token)
+        except Exception:
+            app.logger.exception("Failed to send password reset email")
+
+    return jsonify({
+        "success": True,
+        "message": "If an active account exists for that address, a password-reset email will be sent."
+    }), 200
+
+
 if __name__ == "__main__":
     app.run(
         host="127.0.0.1",
